@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>ZAL专属小站</title>
+<style>
+  html, body {
+    margin: 0; padding: 0;
+    min-height: 100%;
+    font-family: "微软雅黑", sans-serif;
+    background-image: url('bg.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+  }
+
+  h1 {
+    color: #ff6b9d;
+    margin: 0;
+    padding: 18px 0;
+    text-align: center;
+    text-shadow: 0 0 10px rgba(255,255,255,0.8);
+    font-size: 30px;
+  }
+
+  /* 全屏照片滑动区 */
+  .slider {
+    position: fixed;
+    top: 80px; left: 0;
+    width: 100%;
+    height: calc(100vh - 80px);
+    overflow: hidden;
+  }
+  .slider-track {
+    animation: scrollUp 120s linear infinite;   /* 更慢，连续向上滚 */
+  }
+  @keyframes scrollUp {
+    0%   { transform: translateY(0); }
+    100% { transform: translateY(-5500px); }   /* 11组 × 500px，滑完无缝循环 */
+  }
+
+  /* 每组3张：高度紧凑，照片挨着，位置错落 */
+  .group {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    height: 500px;
+  }
+  .group img {
+    width: 320px;
+    height: 460px;
+    object-fit: cover;
+    border-radius: 18px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  }
+  .group img:nth-child(1) { transform: translateY(-30px); }
+  .group img:nth-child(2) { transform: translateY(30px); }
+  .group img:nth-child(3) { transform: translateY(-30px); }
+
+  .snow {
+    position: fixed; top: -20px;
+    color: #fff;
+    pointer-events: none;
+    z-index: 999;
+    text-shadow: 0 0 6px rgba(255,255,255,0.95);
+    animation: fall linear infinite;
+  }
+  @keyframes fall {
+    0%   { transform: translateY(-20px) translateX(0); }
+    100% { transform: translateY(110vh) translateX(30px); }
+  }
+
+  #musicBtn {
+    position: fixed; top: 18px; right: 18px;
+    z-index: 1000;
+    padding: 10px 16px;
+    border: none; border-radius: 20px;
+    background: rgba(255,107,157,0.35);
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+  <h1>雏田的专属小站</h1>
+
+  <div class="slider">
+    <div class="slider-track" id="track"></div>
+  </div>
+
+  <audio id="bgm" src="music.mp3" loop autoplay></audio>
+  <button id="musicBtn">🎵 音乐</button>
+
+  <script>
+    var names = [];
+    for (var i = 1; i <= 33; i++) { names.push('images/p' + i + '.jpg'); }
+
+    var track = document.getElementById('track');
+    var html = '';
+    for (var g = 0; g < 11; g++) {
+      html += '<div class="group">'
+            + '<img src="' + names[g*3] + '"><img src="' + names[g*3+1] + '"><img src="' + names[g*3+2] + '">'
+            + '</div>';
+    }
+    html += '<div class="group">'
+          + '<img src="' + names[0] + '"><img src="' + names[1] + '"><img src="' + names[2] + '">'
+          + '</div>';
+    track.innerHTML = html;
+
+    function makeSnow() {
+      var snow = document.createElement('div');
+      snow.className = 'snow';
+      snow.innerHTML = '❄';
+      snow.style.left = Math.random() * 100 + 'vw';
+      snow.style.fontSize = (Math.random() * 12 + 8) + 'px';
+      snow.style.animationDuration = (Math.random() * 8 + 6) + 's';
+      snow.style.opacity = Math.random() * 0.8 + 0.2;
+      document.body.appendChild(snow);
+      setTimeout(function(){ snow.remove(); }, 16000);
+    }
+    setInterval(makeSnow, 200);
+
+    var bgm = document.getElementById('bgm');
+    bgm.play();
+    document.getElementById('musicBtn').onclick = function() {
+      if (bgm.paused) { bgm.play(); } else { bgm.pause(); }
+    };
+  </script>
+</body>
+</html>
